@@ -1,36 +1,29 @@
-import React, { useReducer } from 'react';
+import React, { useState, useCallback } from 'react';
 import { StyleSheet, View, Text, } from 'react-native';
 
-const initialState = {
-  count: 0
-}
+// Hay veces en las que los componentes funcionales se están renderizando una y otra vez sin control
+// y también se van a crear instancias de las funciones, las cuales ocupan memoria y procesamiento, por lo que hay que optimizar la aplicación
 
-// Recibimos un estado y una acción
-const reducer = (state, action) => {
-  switch(action.type){
-    case 'incrementar': {
-      return { count: state.count + 1}
-    }
-    case 'decrementar': {
-      return { count: state.count -  1}
-    }
-    // si no hay ninguna acción, se regresa el estado original que recibimos
-    default: {
-      return state
-    }
-  }
-}
+// useCallback es muy similar a useMemo, la diferencia es que useMemo, te devuelve un valor ya calculado, useCallback te devuelve la referencia de la misma función
 
 export default function App(){
-  // state, la primera vez, tendrá el valor de 0
-  // dispatch es la función que nos permitirá despachar acciones como 'incrementar' y 'decrementar'
-  const [state, dispatch] = useReducer(reducer, initialState)
+  const [count, setCount] = useState(0)
+
+   // al igual que useMemo, useCallback recibe otro parámetro, que, en caso de que el valor de éste cambie, vuelve a crear la función
+  const incrementar = useCallback(() => {
+    setCount(count+1)
+  }, [count])
+  
+  const decrementar = useCallback(() => {
+    setCount(count-1)
+  },[count])
+
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Hooks - useReducer</Text>
-      <Text style={styles.counter} onPress={() => dispatch({ type: 'incrementar'})}>+</Text>
-      <Text style={styles.counter} >{state.count}</Text>
-      <Text style={styles.counter} onPress={() => dispatch({ type: 'decrementar'})}>-</Text>
+      <Text style={styles.counter} onPress={() => incrementar()}>+</Text>
+      <Text style={styles.counter} >{count}</Text>
+      <Text style={styles.counter} onPress={() => decrementar()}>-</Text>
     </View>   
   );
 }
