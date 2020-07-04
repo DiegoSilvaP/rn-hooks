@@ -1,19 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, } from 'react-native';
 
+
 export default function App(){
-// Los hooks retornan un arreglo
-// El primer elemento del arreglo, es un estado, el segundo elemento, es una función que se utilizará para actualizar el valor del estado
+  const [users, setUsers] = useState(0)
+  const [loading, setLoading] = useState(true)
 
-// La primera vez que se inicia la variable count, vale 0
-const [count, setCount] = useState(0)
+  // // useEffect sólo debe retornar una funcion, no una promesa
+  // useEffect(async () => {
+  //   // Usamos await para que resuelva la promesa
+  //   const response = await fetch('https://jsonplaceholder.typicode.com/users')
+  //   const json = await response.json()
+  //   setUsers(json)
+  //   setLoading(false)
+  // }, [])
 
+  const fetchUsers = async () => {
+    // Usamos await para que resuelva la promesa
+    const response = await fetch('https://jsonplaceholder.typicode.com/users')
+    const json = await response.json()
+    setUsers(json)
+    setLoading(false)
+  }
 
+  useEffect(() => {
+    fetchUsers()
+  }, [])
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Hooks - useState</Text>
-      <Text onPress={()=> setCount(count+1)} style={styles.text}>{count}</Text>
+      <Text style={styles.text}>Hooks - useState & useEffect</Text>
+      <Text style={styles.text}>
+        {loading ? 'Cargando...' : users[0].name}
+      </Text>
     </View>   
   );
 }
